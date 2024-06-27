@@ -1,4 +1,4 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, InputNumber, message } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import memberApi from "../../api/memberApi";
@@ -34,7 +34,7 @@ const RegisterPage = () => {
     return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#f0f2f5" }}>
             <div style={{ backgroundColor: "#ffffff", width: "30vw", maxWidth: "360px", marginTop: "32px", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)" }}>
-                <div style={{ display: "flex", justifyContent: "center", my: "5", fontSize: "20px", fontWeight: "bold", width: "100%" }}>
+                <div style={{ display: "flex", justifyContent: "center", my: "5", fontSize: "20px", fontWeight: "bold", width: "100%", marginBottom: '5px' }}>
                     Register
                 </div>
 
@@ -76,14 +76,14 @@ const RegisterPage = () => {
                         <Form.Item
                             label={<span>Year of birth</span>}
                             name="yob"
-                            rules={[{ required: true, message: "Please input your year of birth!" }]}
+                            rules={[{ required: true, type: 'number', min: 1975.0, message: "Please input your year of birth!" }]}
                         >
-                            <Input placeholder="Input year of birth" />
+                            <InputNumber type="number" min={1975.0} style={{ width: '100%' }} placeholder="Input year of birth" />
                         </Form.Item>
-                        <p>
+                        <p style={{ textAlign: 'center' }}>
                             Already have an account? Please{" "}
                             <Link to="/login" style={{ fontWeight: "bold", color: "#ff0000" }}>
-                                login
+                                Login
                             </Link>
                         </p>
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>

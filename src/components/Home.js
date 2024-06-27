@@ -103,12 +103,12 @@ const Home = () => {
                                     onClick={() => handleCardClick(watch._id)}
                                 >
                                     <div style={{ height: 80, marginBottom: 20 }}>
-                                        <Title level={3}>{watch.watchName}</Title>
+                                        <Title level={3}>{watch?.watchName}</Title>
                                     </div>
-                                    <Title level={4}>{watch.brand?.brandName || 'No brand'}</Title>
+                                    <Title style={{ color: 'gray' }} level={4}>{watch?.brand?.brandName || 'No brand'}</Title>
                                     <div>
                                         <span>Price: </span>
-                                        <span style={{ color: 'red', fontSize: '25px', letterSpacing: '3px' }}>${watch.price}</span>
+                                        <span style={{ color: 'red', fontSize: '25px', letterSpacing: '2px', fontWeight: 'bold' }}>${watch?.price}</span>
                                     </div>
                                 </Card>
                             </Col>
@@ -117,7 +117,7 @@ const Home = () => {
 
                     <Pagination
                         current={currentPage}
-                        total={totalPages * 6}
+                        total={totalPages * 9}
                         onChange={handlePageChange}
                         style={{ marginTop: 16, textAlign: 'center' }}
                     />

@@ -12,7 +12,7 @@ const DetailPage = () => {
     const [userCommented, setUserCommented] = useState(false);
     const [form] = Form.useForm();
     const { user } = useAuth();
-    const navigation = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchWatchDetails = async () => {
@@ -26,7 +26,7 @@ const DetailPage = () => {
                     setUserCommented(!!userComment);
                 }
             } catch (error) {
-                console.error("Failed to fetch watch details:", error);
+                message.error("Failed to fetch watch details");
             }
         };
         fetchWatchDetails();
@@ -67,25 +67,33 @@ const DetailPage = () => {
     };
 
     if (!watch) {
-        return <Spin
-            size="large"
-            style={{ display: "flex", justifyContent: "center", height: "100vh", alignItems: "center" }}
-        />;
+        return (
+            <Spin
+                size="large"
+                style={{ display: "flex", justifyContent: "center", height: "100vh", alignItems: "center" }}
+            />
+        );
     }
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', options).replace(',', ' at');
+    };
 
     return (
         <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
             <div style={{ display: "flex", marginBottom: "20px" }}>
                 <div style={{ flex: "1", marginRight: "20px", width: '300px', height: '300px', overflow: "hidden" }}>
                     <img
-                        src={watch.image}
-                        alt={watch.watchName}
+                        src={watch?.image}
+                        alt={watch?.watchName}
                         style={{ width: "100%", height: '100%', objectFit: 'cover' }}
                     />
                 </div>
                 <div style={{ flex: "2" }}>
                     <div style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}>
-                        {watch.watchName}
+                        {watch?.watchName}
                     </div>
                     <div style={{ marginBottom: "10px" }}>
                         <span style={{ fontSize: "16px", fontWeight: "bold" }}>Brand: </span>
@@ -93,26 +101,28 @@ const DetailPage = () => {
                     </div>
                     <div style={{ marginBottom: "10px" }}>
                         <span style={{ fontSize: "16px", fontWeight: "bold" }}>Price: </span>
-                        <span style={{ fontSize: "20px", color: 'red', letterSpacing: '3px' }}>${watch.price}</span>
+                        <span style={{ fontSize: "20px", color: 'red', letterSpacing: '3px' }}>${watch?.price}</span>
                     </div>
                     <div style={{ marginBottom: "20px" }}>
                         <span style={{ fontSize: "16px", fontWeight: "bold" }}>Description: </span>
-                        <p>{watch.watchDescription}</p>
+                        <p>{watch?.watchDescription}</p>
                     </div>
                     <div style={{ textAlign: "center", display: 'flex', justifyContent: 'space-between' }}>
-                        <div>
-                            <Button type="default" style={{ width: "100px", marginRight: "10px" }}
-                                onClick={() => message.success("Add to card successfully")}
-                            >
-                                Add to cart
-                            </Button>
-                            <Button type="primary" style={{ width: "100px" }}
-                                onClick={() => message.success("Buy successfully")}
-                            >
-                                Buy now
-                            </Button>
-                        </div>
-                        <Button type="default" style={{ width: "50px" }} danger onClick={() => navigation(-1)}>
+                        {!user?.isAdmin && (
+                            <div>
+                                <Button type="default" style={{ width: "100px", marginRight: "10px" }}
+                                    onClick={() => message.success("Add to cart successfully")}
+                                >
+                                    Add to cart
+                                </Button>
+                                <Button type="primary" style={{ width: "100px" }}
+                                    onClick={() => message.success("Buy successfully")}
+                                >
+                                    Buy now
+                                </Button>
+                            </div>
+                        )}
+                        <Button type="default" style={{ width: "50px" }} danger onClick={() => navigate(-1)}>
                             Back
                         </Button>
                     </div>
@@ -124,13 +134,14 @@ const DetailPage = () => {
                 <h2 style={{ fontSize: "20px", fontWeight: "bold", borderBottom: "1px solid #e0e0e0", paddingBottom: "10px" }}>
                     All comments
                 </h2>
-                {comments.map((comment, index) => (
+                {[...comments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((comment, index) => (
                     <div key={index} style={{ marginTop: "10px", padding: "10px", backgroundColor: "#f0f0f0", borderRadius: "5px", display: "flex" }}>
                         <Avatar icon={<UserOutlined />} />
                         <div style={{ marginLeft: "10px" }}>
                             <div style={{ fontWeight: "bold" }}>{comment.author && comment.author.membername ? comment.author.membername : "Unknown User"}</div>
                             <Rate value={comment.rating} disabled />
                             <p>{comment.content}</p>
+                            <div style={{ color: "gray", fontSize: "12px" }}>{formatDate(comment.createdAt)}</div>
                         </div>
                     </div>
                 ))}
